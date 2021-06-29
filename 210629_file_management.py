@@ -165,4 +165,55 @@ df[['지점명', '일시', '평균기온(℃)','최고기온(℃)', '최저기�
 # 참고 페이지 pandas 검색해서 홈페이지에 들어가면 설명서 나와있음
 # Pandas documentation pdf 다운로드 하면 알 수 있음
 
+# #### [미션] 자신의 생일과 일치하는 날짜에 대한 날짜/평균기온/최고/최저 출력하는 데이터
+#
+# - 생일일치: 월, 일 두개가 일치하면 나머지 데이터 리스트 변수에 리스트형으로 추가
+
+# +
+import csv
+f=open('./Data/seoul.csv','r', encoding='cp949') 
+
+data = csv.reader(f, delimiter=",") # 안에 있는 데이터를 , 단위로 구분해서 가져와라
+header=next(data) # next() : 첫행을 제목행으로 처리 다음줄부터 읽어라
+print(header)
+print()
+
+my_birth = ["1993-05-01"]
+
+result_data = []
+for row in data:
+    target_data=["", 0, 0, 0]
+    if row[-1] != "":
+        if int(row[-1][:4])>=1993 and row[-1][5:7]=="05" and row[-1][-2:]=="01" :
+            target_data[0] = row[-1]
+            target_data[1] = row[3]
+            target_data[2] = row[-2]
+            target_data[3] = row[5]
+            
+            result_data.append(target_data)
+
+f.close()
+print(result_data)
+
+# +
+import csv
+f=open('./Data/seoul.csv','r', encoding='cp949') 
+
+data = csv.reader(f, delimiter=",") # 안에 있는 데이터를 , 단위로 구분해서 가져와라
+header=next(data) # next() : 첫행을 제목행으로 처리 다음줄부터 읽어라
+print(header)
+print()
+
+my_birth = ["1993-05-01"]
+
+
+for row in data:
+    if row[-1] != "":
+        if int(row[-1][:4])>=1993 and row[-1][5:7]=="05" and row[-1][-2:]=="01" :
+            result_data.append([row[-1],row[3],row[-2],row[5]])
+
+f.close()
+print(result_data)
+# -
+
 

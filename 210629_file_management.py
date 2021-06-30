@@ -206,14 +206,17 @@ print()
 
 my_birth = ["1993-05-01"]
 
-
+final_data = []
 for row in data:
+    result_data = []
     if row[-1] != "":
         if int(row[-1][:4])>=1993 and row[-1][5:7]=="05" and row[-1][-2:]=="01" :
             result_data.append([row[-1],row[3],row[-2],row[5]])
+            final_data.append(result_data)
+            print(result_data)
 
 f.close()
-print(result_data)
+print(final_data)
 # -
 
 

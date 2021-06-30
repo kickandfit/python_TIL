@@ -77,19 +77,82 @@ plt.legend() #print label
 plt.show()
 
 # +
-#plt 차트에서 한글 지원 방법
-
+#plt 차트에서 한글 지원 방법 1
+#전체에 대해서 폰트속성 변경
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+#from matplotlib import as fm과 같은 문법
+#from matplotlib import rc 를 활용해도 됨 rc를 활용할거냐 아니면 fm을 활용하여 각각 관리할거냐
+
+# 폰트의 위치, 한글 폰트만 활용가능
+# 그중에서도 속성에서 truetype만 활용가능
+font_path = "C:/Windows/Fonts/malgun.ttf" #한글 폰드 경로 및 이름 정의(window10 기반)
+font_name = fm.FontProperties(fname=font_path).get_name()
+plt.rc('font', family=font_name) # 차트 전체 폰트 속성 변경
 
 plt.plot([33, 12, 22, 9, 45], label='abc', color='skyblue', 
          marker='o', linestyle = '--') #chart no.1 and option
 
 # 순서랑 상관 없이 label = '', color= '', 이런식으로 옵션을 입력해라
 
-plt.title('plotting whatever i want') # chart name
+plt.title('차트그리기 실습') # chart name
 plt.xlabel('X-Label') #x axis namep
 plt.ylabel('Y-Label') #y axis name
 plt.legend() #print label
+plt.show()
+
+# +
+#plt 차트에서 한글 지원 방법 2
+#개별 폰트속성 변경
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+
+font_path = "C:/Windows/Fonts/malgun.ttf" 
+font_name1 = fm.FontProperties(fname=font_path, size = 18) # 기본 폰트 및 사이즈 정의
+font_name2 = fm.FontProperties(fname=font_path, size = 13)
+
+plt.plot([33, 12, 22, 9, 45], label='abc', color='skyblue', 
+         marker='o', linestyle = '--') 
+
+plt.title('차트그리기 실습', fontproperties=font_name1) # 차트에 font_name 적용
+plt.xlabel('X-Label', fontproperties=font_name2) #x axis namep
+plt.ylabel('Y-Label', fontproperties=font_name2) #y axis name
+plt.legend() #print label
+plt.show()
+
+# +
+#['\t\t지점번호', '지점명', '일시', '평균기온(℃)', 
+#'평균최고기온(℃)', '최고기온(℃)', '\t최고기온일자', 
+#'평균최저기온(℃)', '최저기온(℃)', '최저기온일자']
+# 날짜데이터(row[-1])를 가져와, "-"를 기준으로 글자 나누기
+# 생일에 따른 년도별 최고기온/최저기온 차트 출력
+
+import csv
+
+f= open("./Data/seoul.csv")
+data = csv.reader(f)  
+header = next(data) 
+
+max_temp = []
+min_temp = []
+
+for row in data:
+    
+    pre_max_temp=[]
+    pre_min_temp=[]
+    
+    if row[-1] != "":
+        if int(row[-1].split('-')[0]) >= 1985:
+            if row[-1][-5:]=="05-01":
+                
+                pre_max_temp.append(float(row[4]))
+                pre_min_temp.append(float(row[-2]))
+                max_temp.append(pre_max_temp)
+                min_temp.append(pre_min_temp)
+
+                
+plt.plot(max_temp)
+plt.plot(min_temp)
 plt.show()
 # -
 

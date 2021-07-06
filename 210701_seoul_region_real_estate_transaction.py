@@ -107,11 +107,11 @@ for dong in d_name:
         
 #print(avg_lst)
 f.close()
+print(type())
+# import pandas as pd
 
-import pandas as pd
-
-df=pd.DataFrame(avg_lst)
-df
+# df=pd.DataFrame(avg_lst)
+# df
 
 
 # d_name1 = [lst[1] for lst in d_lst if lst[1] not in d_name1 ]

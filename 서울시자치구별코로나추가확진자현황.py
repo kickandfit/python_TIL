@@ -96,7 +96,7 @@ def update_data():
     #print(url)
     today_date = url.find('jcg_dt').text
     #print(today_date)
-
+    df_index = df_columns()
     if df.loc[0][0] == today_date:
 
         print('최신 데이터 자료입니다')
@@ -174,7 +174,7 @@ def month_data(df):
 
 
 # +
-#start()
+start()
 font()
 df = pd.read_csv("c:/pydata/seoul_covid19_info.csv", encoding = 'cp949')
 df.drop('수집일', axis =1, inplace = True )
@@ -190,9 +190,9 @@ plt.ylabel('추가 확진자수', size = 13)
 plt.title('월별 조회 해당구 추가 확진자 현황')
 plt.show()
 # -
+df1
 
-
-
+df2
 
 
 

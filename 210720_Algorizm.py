@@ -407,11 +407,233 @@ while True:
             break
         current = current.right
 
+
+# +
+## 함수, 클래스
+class Graph():
+    def __init__(self, size):
+        self.SIZE = size
+        self.graph = [[0 for _ in range(size)] for _ in range(size)]
+        
+
+
+
+## 전역
+A, B, C, D = 0, 1, 2, 3
+G1 = Graph(4)
+
+## 메인
+
+G1.graph[A][B] = 1
+G1.graph[A][C] = 1
+G1.graph[A][D] = 1
+
+G1.graph[B][A] = 1
+G1.graph[B][C] = 1
+
+G1.graph[C][B] = 1
+G1.graph[C][A] = 1
+G1.graph[C][D] = 1
+
+G1.graph[D][A] = 1
+G1.graph[D][C] = 1
+
+for i in range(4):
+    for k in range(4):
+        print(G1.graph[i][k], end=' ')
+    print()
+print('-------------------------')
+G2 = Graph(4)
+G2.graph[A][B]=1
+G2.graph[B][A]=1
+
+G2.graph[B][D]=1
+G2.graph[D][B]=1
+
+G2.graph[C][D]=1
+G2.graph[D][C]=1
+
+for i in range(4):
+    for k in range(4):
+        print(G2.graph[i][k], end=' ')
+    print()
+
+
+# +
+# 재귀(Recrusion)
+# 함수
+def openBox(count):
+   
+
+    print('상자 열기')
+    if count == 0:
+        print('선물 넣기')
+    if count > 0:
+     
+        openBox(count -1)
+        print('상자 닫기!')
+        
+        
+
+
+# 메인 코드부
+openBox(5)
+
+
 # -
 
-a= '블랙핑크'
-b= '바바부'
+# 함수
+def addNumber(num):
+    if num == 1:
+        return 1
+    return num + addNumber(num - 1)
+addNumber(5)
 
 
+# +
+def Factorial(num):
+    if num <= 1:
+        return 1
+    return num*Factorial(num-1)
+
+Factorial(3)
+
+
+# +
+def countDown(num):
+    if num <= 1:
+        print(num)
+        return print('로켓발사!')
+    print(num)
+    return countDown(num -1)
+    
+countDown(5)
+
+# +
+layer = 5
+def printStar(num):
+    global layer
+    print( '*'*num)
+    if num == layer:
+        return
+    return printStar(num+1)
+
+printStar(1)
+
+
+# -
+
+def printStar(layer):
+    if layer > 0:
+        printStar(layer-1)
+        print("*"*layer)
+printStar(5)
+
+
+# +
+def num(n):
+    print(n)
+    if n > 0 :
+        num(n-1)
+        print(n)
+        
+num(3)
+
+
+# +
+# 함수
+def FindMinIndex(ary):
+    minIdx = 0
+    for i in range(1, len(ary)) :
+        if (ary[minIdx]> ary[i]):
+            minIdx = i
+    return minIdx
+# 전역
+testAry = [55, 88, 33, 77]
+minPos = FindMinIndex(testAry)
+print('최솟값-->', testAry[minPos])
+#메인
+
+
+
+# +
+## 함수
+def FindMinIndex(ary):
+    minIdx = 0
+    for i in range(1, len(ary)) :
+        if (ary[minIdx]> ary[i]):
+            minIdx = i
+    return minIdx
+
+## 전역
+import random
+before = [random.randint(50,200) for _ in range(10)]
+after = []
+
+
+##
+print('정렬 전-->', before)
+for _ in range(len(before)):
+    minPos = FindMinIndex(before)
+    after.append(before[minPos])
+    del(before[minPos])
+print('정렬 후 -->', after)
+
+
+# +
+## 함수
+def selctionSort(ary):
+    n = len(ary)
+    for i in range(n-1):
+        minIdx = 0
+        for k in range(i+1, n) :
+            if (ary[minIdx]> ary[k]):
+                minIdx = k
+        ary[i],ary[minIdx] = ary[minIdx], ary[i]
+    return ary
+## 전역
+import random
+size = 100
+dataAry = [random.randint(50,200) for _ in range(size)]
+
+## 메인
+
+print('정렬 전-->', dataAry)
+dataAry = selctionSort(dataAry)
+print('정렬 후-->', dataAry)
+
+
+# +
+## 이진검색
+
+## 함수
+def binarySerach(ary, fData):
+    pos =-1
+    start = 0
+    end = len(ary)-1
+    while (start<=end):
+        mid = (start + end) // 2
+        if ary[mid] == fData:
+            return mid
+        elif fData > ary[mid]:
+            start = mid + 1
+        else :
+            end = mid - 1
+    
+    
+    return pos
+
+## 전역
+dataAry = [50, 60, 105, 120, 150, 160, 162, 168, 177, 180]
+findData = 162
+
+## 메인
+print('배열-->', dataAry)
+position = binarySerach(dataAry, findData)
+if position == -1:
+    print('없어요')
+else:
+    print(findData, '는', position, '위치에 있어요')
+# -
 
 

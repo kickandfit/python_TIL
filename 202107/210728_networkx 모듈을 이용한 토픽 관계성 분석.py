@@ -84,4 +84,33 @@ prk = nx.pagerank(gra)
 nsize = np.array([val for val in prk.values()])
 nsize = 2000*(nsize-min(nsize))/(max(nsize)-min(nsize))
 
+pos = nx.planar_layout(gra)
+pos
+
+# +
+# 한글폰트 설정
+from matplotlib import font_manager
+font_family = font_manager.FontProperties(fname='C:/Windows/Fonts/malgunsl.ttf').get_name()
+
+plt.figure(figsize=(7,7))
+nx.draw_networkx(gra, node_color=list(prk.values()), node_size=nsize,
+                 alpha=0.5, edge_color='0.3', #cmap=plt.cm.YlGn,
+                 font_family=font_family,font_size=15)
+plt.draw()
+
+# -
+
+#
+
+
+
+
+
+
+
+
+
+
+
+
 

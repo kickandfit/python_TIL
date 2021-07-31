@@ -223,19 +223,87 @@ graph
 
 # +
 # 문제 3
-N = int(input())
+from itertools import combinations
+n = int(input())
 board = []
-
-for i in range(N):
+teachers = []
+spaces = []
+for i in range(n):
     board.append(list(map(str, input().split())))
-
-
-# if x>=N or y >= N or x < 0 or y <0:
+    for j in range(n):
+        if board[i][j] == 't':
+            teachers.append((i,j))
+        # obstacle을 설치할 수 있는 공간 저장
+        if board[i][j] == 'x':
+            spaces.append((i,j))
 
         
 def look(board,x,y):
-    if board[x][y] == t:
-        pass
+    if board[x][y] == 't':
+        #왼쪽 탐색
+        if direction == 0:
+            while y >=0:
+                y -= 1
+
+                if board[x][y] == s:
+                    return True
+                if board[x][y] == o:
+                    return False
+            
+         #오른쪽 탐색
+        if direction == 1:
+            while y < n:
+                y +=1
+                if board[x][y] == 's':
+                    return True
+                if board[x][y] == 'o':
+                    return False
+        #위쪽탐색
+        if direction == 2:
+            while x>=0:
+                x -=1
+                if board[x][y] == 's':
+                    return True
+                if board[x][y] == 'o':
+                    return False
+        #아래 탐색
+        if direction == 3:
+            while x<n:
+                x +=1
+                if board[x][y] == 's':
+                    return True
+                if board[x][y] == 'o':
+                    return False
+
+def process():
+    
+    for x,y in teacher:
+        for i in range(4):
+            if look(x,y,i):
+                return True
+        return False
+    
+    find = False
+    
+    for data in combinations(spaces, 3):
+        
+        for x,y in data:
+            board[x][y] = 'o'
+        
+        if not process():
+            
+            find = True
+            break
+            
+        for x,y in data:
+            board[x][y] = 'x'
+            
+            
+if find:
+    print('YES')
+
+else:
+    print('NO')
 # -
 
 

@@ -336,6 +336,8 @@ def bfs (x, y):
             y -= 1
     return True
     
+
+
 # -
 
 # #### 다음 시간 다이나믹 프로그래밍
@@ -354,5 +356,101 @@ def bfs (x, y):
 # - 사용자가 만든 class는 기본적으로 mutable임
 # - 때문에 판다스, 넘파이 등의 형식은 mutable 이라 똑같은 데이터셋, 배열 등을 활용하고 싶을 때는 copy해줘야함
 # - 또한 mutable의 mutable이 있을 경우, deep copy를 해줘야함
+
+# #### 문제 4번 풀이 idea(왤케 어렵냐..이걸 50분이라..)
+#
+#     1. 문제 조건 입력받기
+#     2. 움직임 구현하기(회전으로 움직임 + 직선 움직임) ( 조건 : 회전하는 축 대각선기준 1 이 있으면 불가)
+#     3. 움직임 한번에 1초
+#     4. bfs 구현해서 가장 마지막칸에 +1로 구현해보자
+
+# ####  다이나믹 프로그래밍 문제 1.
+#
+# 정수 x가 주어질 떄 정수 x 에 사용할 수 있는 연산은 다음과 같이 4가지다. x가 5로 나누어 떨어지면, 5로 나눈다. x가 3으로 나누어 떨어지면 3으로 나눈다 2로 나누어 떨어지면 2로 나눈다. x 에서 1을 뺀다.
+#
+# 정수 x가 주어졌을때, 4개의 연산을 적절히 사용해서 1로 만들려고 한다. 연산을 사용하는 최솟값을 출력해라
+
+n = 267
+d = [0]*(n+1)
+for i in range(2, n+1):
+    d[i] = d[i-1] + 1
+    
+    if i % 2== 0 :
+        d[i] = min(d[i],d[i//2]+1)
+    if i % 3== 0 :
+        d[i] = min(d[i],d[i//3]+1)
+    if i % 5== 0 :
+        d[i] = min(d[i],d[i//5]+1)
+print(d[n])
+cnt = 0
+def d(n):
+    global cnt
+    
+    if n <=2:
+        return 1
+    
+    for i in (5, 3, 2):
+        if n%i == 0:
+            d(int(n/i))
+            cnt += 1
+            break
+        else : 
+            d(n-1)
+            cnt += 1
+            break
+    return cnt
+print(d(n))
+
+
+# +
+# 피보나치 구현 및 다이나믹 프로그래밍
+# 피보나치 수열 구현
+def fibo(n):
+    if n ==1 or n ==2:
+        return 1
+    return fibo(n-1) + fibo(n-2)
+    
+# 다이나믹 프로그래밍 적용
+d = [0]*(n+1)
+def fibo_D(n):
+    if n == 1 or n == 2:
+        return 1
+    if d[n] != 0:
+        return d[n]
+    d[n] = fibo_D[n-1]+fibo_D[n-2]
+    return d[n]
+print(fibo_D(6))
+    
+# -
+
+
+
+def d(n):
+    print(n)
+    if n <=2:
+        return 1
+    d(n-1)
+d(10)
+
+graph = [
+    [],
+    [2, 3, 8],
+    [1, 7],
+    [1, 4, 5],
+    [3, 5],
+    [3, 4],
+    [7],
+    [2, 6, 8],
+    [1, 7]
+]
+visited=[False]*9
+def dfs_1(graph, v, visited):
+    visited[v] = True
+    print(v)
+    for i in graph[v]:
+        if not visited[i]:
+            dfs_1(graph,i,visited)
+            break # 1path의 역할을 하겠네 최대 깊이 1 path
+dfs_1(graph ,1 ,visited)
 
 

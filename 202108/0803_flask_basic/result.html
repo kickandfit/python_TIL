@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>객체판별결과창</title>
+	</head>
+	<body>
+		<h1>객체판별결과</h1>
+		<hr>
+		
+		{% if result %}
+			<img src="{{ url_for('static', filename=result) }}" width="700" height="700">
+		{% endif %}
+		
+	</body>
+</html>

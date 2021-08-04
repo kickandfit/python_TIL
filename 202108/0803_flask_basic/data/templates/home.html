@@ -1,0 +1,25 @@
+
+<h1> [배추값 예상에 필요한 값 입력] </h1>
+
+<form action="/" method="post">
+	<label >평균기온</label>
+	<input type="text" name="avg_temp">
+		
+	<label >최고기온</label>
+	<input type="text" name="max_temp">
+	
+	<label >최저기온</label>
+	<input type="text" name="min_temp">
+
+  <label >강수량평균</label>
+	<input type="text" name="rain_fail">
+	
+	<p> <button style="font-family: 'Nanum Barun Gothic' !important;" type="submit" >예측하기</button> </p> 
+</form>
+	
+	
+<h2> [예측 결과]</h2>
+	{% if price %}
+	<h3 >예측된 가격은 {{ price }}원입니다.</h3>
+    {% endif %}
+					  

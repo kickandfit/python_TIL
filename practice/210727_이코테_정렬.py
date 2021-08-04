@@ -121,6 +121,38 @@ for i in range(len(count)):
         print(i, end= " ")
     
 # -
+# 기본 문제 1
+# n = int(input())
+array = [14,21,34]
+# for i in range(n):
+#     array.append(int(input()))
+# array.sort(reverse=True)
+array = sorted(array, reverse = True)
+print(array)
 
+#기본문제 2
+data = {'홍길동' : 95, '이순신' : 77}
+result = sorted(data, key = lambda x : x[1])
+result
+
+# +
+# 최대 데이터 값받기
+
+n, k = 5, 3
+A = [1, 2, 5, 4, 3]
+B = [5, 5, 6, 6, 5]
+A.sort()
+B.sort(reverse = True)
+for i in range(k):
+    if A[i] < B[i]:
+        A[i], B[i] = B[i], A[i]
+    else:
+        break
+sum = 0
+for i in A:
+    sum += i
+sum
+
+# -
 
 

@@ -287,8 +287,139 @@ def topology_sort():
                 q.append(i)
 for i in result:
     print(i, end = ' ')
+
+
+# -
+# 재귀로 보는 트리 : 전위 순위
+def a(n):
+    if n<1:
+        return 1
+    print(n, end = ' ')
+    a(n-1)
+    a(n-1)
+    a(n-1)
+a(3)
+
+
+# ![image.png](attachment:image.png)
+
+# 재귀로 보는 트리 : 중위 순회 -1
+# 코드의 위치에 따라 탐색 순서가 달라짐 ( print 위치 2 따라서 아래 한개 탐색 후 위 찍고 다시 아래 세개)
+def a(n):
+    if n<1:
+        return 1
+    
+    a(n-1)
+    print(n, end = ' ')
+    a(n-1)
+    a(n-1)
+    a(n-1)
+a(4)
+
+
+# ![image.png](attachment:image.png)
+
+# 재귀로 보는 트리 : 중위 순회 -2
+# 코드의 위치에 따라 탐색 순서가 달라짐 ( print 위치 3 따라서 아래 두개 탐색 후 위 찍고 다시 아래 두개)
+def a(n):
+    if n<1:
+        return 1
+    
+    a(n-1)
+    a(n-1)
+    print(n, end = ' ')
+    a(n-1)
+    a(n-1)
+a(4)
+
+
+# ![image.png](attachment:image.png)
+
+# +
+#재귀로 보는 회귀 : 후위순회
+def a(n):
+    if n<1:
+        return 1
+    
+    a(n-1)
+    a(n-1)
+    a(n-1)
+    a(n-1)
+    print(n, end = ' ')
+    
+a(4)
 # -
 
+# ![image.png](attachment:image.png)
 
+# +
+#재귀로 보는 순회 응용
+cnt = 0
+def a(n):
+    global cnt
+    print(n, end = ' ')
+    if n<=1: # <= 와 < 의 차이 내가 코드를 작성하고 위에서 종료조건 위에서 빠져나오게 할때는 =을 써줘야함
+        cnt += 1
+        return cnt
+    
+    a(n-1)
+    a(n-1)
+    return a(n-1)
 
+print(a(3))
 
+# +
+#재귀로 보는 순회 응용2
+cnt = 0
+def a(n):
+    global cnt
+    print(n, end = ' ')
+    if n<1: # <= 와 < 의 차이 내가 코드를 작성하고 종료조건 아래에서 빠져나오게 할때는 =을 빼줘야함. 
+            #그러나 메모리의 비효율성이 발생함 ( 바로 위의 코드와 결과는 같으나, 사실은 0까지 메모리가 부여됨)
+            #낭비된 메모리 개수 =27(cnt개)
+        cnt += 1
+        return cnt
+    
+    a(n-1)
+    a(n-1)
+    return a(n-1)
+
+print(a(3))
+# -
+
+#재귀로 보는 순회 응용3
+cnt = 0
+def a(n):
+    global cnt
+    print(n, end = ' ')
+    if n<1: # <= 와 < 의 차이 내가 코드를 작성하고 종료조건 아래에서 빠져나오게 할때는 =을 빼줘야함. 
+            #그러나 메모리의 비효율성이 발생함 ( 바로 위의 코드와 결과는 같으나, 사실은 0까지 메모리가 부여됨)
+            #낭비된 메모리 개수 =27(cnt개)
+            # 낭비된 메모리수 a(n-1)개의 호출 개수를 n개라 하면 n의 3승개
+        cnt += 1
+        return cnt
+    
+    a(n-1)
+    a(n-1)
+    a(n-1)
+    return a(n-1)
+print(a(3))
+
+#재귀로 보는 순회 응용4
+cnt = 0
+def a(n):
+    global cnt
+    
+    if n<1: # <= 와 < 의 차이 내가 코드를 작성하고 종료조건 아래에서 빠져나오게 할때는 =을 빼줘야함. 
+            #그러나 메모리의 비효율성이 발생함 ( 바로 위의 코드와 결과는 같으나, 사실은 0까지 메모리가 부여됨)
+            #낭비된 메모리 개수 =27(cnt개)
+        cnt += 1
+        return 1
+    print(n, end = ' ')
+#     a(n-1)
+#     a(n-1)
+#     a(n-1)
+    return a(n-1) + a(n-1)+ a(n-1)# 이건 규칙모르겠다 솔직히
+print(a(3))
+
+1 36 378 2080 // 6*6 / 6*7*9 / 10*4*4*13

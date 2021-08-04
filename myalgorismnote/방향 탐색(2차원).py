@@ -70,3 +70,89 @@ def dfs(x, y):
         dfs(x,y+1)
         return True
     return False
+
+
+# -
+
+# for 문과 재귀를 이용한 dfs(삼성전자 바이러스 핵심코드)
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
+n,m =7, 7
+def dfs(x,y):
+    for i in range(4):
+        nx = x + dx[i]
+        ny = y + dy[i]
+        
+        if nx<n and nx>=0 and ny < m and ny>=0:
+            if board[nx][ny]==0:
+                board[nx][ny] = 2
+                dfs(nx,ny)
+
+
+# +
+# 한칸이 아니라 두칸으로 움직일 때, 회전이 포함될때
+
+# keyidea1 
+# set으로 관리하면 q에 집입할때 순열느낌으로 들어감
+# 때문에 방문 처리시 중복을 거를 수 있음
+# 위치 정보를 인덱싱 하기 위해
+# pos1, pos2 로 관리하기 전 pos를 리스트화 해줘야함
+pos = {(1,1),(1,2)} 
+
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
+
+def get_next_pos(pos,board):
+    next_pos = []
+    pos = list(pos)
+    pos1_x, pos1_y, pos2_x,pos2_y = pos[0][0],pos[0][1],pos[1][0],pos[1][1]
+    for i in range(4):
+        pos1_next_x,pos1_next_y,pos2_next_x,pos2_next_y = pos1_x+dx[i], pos1_y+dy[i],pos2_x+dx[i], pos2_y+dy[i]
+        
+        #이동가능 조건 파악
+        if board[pos1_next_x][pos1_next_y]==0 and board[pos2_next_x][pos2_next_y]==0:
+            next_pos.append({(pos1_next_x,pos1_next_y),(pos2_next_x,pos2_next_y)})
+    
+    #keyidea3: 회전처리
+    # 가로로 놓여져 있다면 조건 만족시 회전
+    if pos1_x==pos2_x:
+        for i in [-1, 1]: # 이 -1, 1이 핵심이다
+            if board[pos1_x + i][pos1_y] == 0 and board[pos2_x + i][pos2_y] == 0:
+                next_pos.append({(pos1_x, pos1_y), (pos1_x + i, pos1_y)})
+                next_pos.append({(pos2_x, pos2_y), (pos2_x + i, pos2_y)})
+
+
+# -
+
+# #### 장애물이나 사물 배치시 고려해야할 사항
+#
+# - 완전 탐색을 진행할 것이라면, 10000이하의 수에 대해 진행해라
+#   ( 대략 40이하의 수에 대해 진행할것 )
+
+# +
+# 1차원 회전 밑 방향전환 ( 2차원 맵에서)
+# 이코드는 돌아가지 않음 핵심 부분만 정리하는 것
+
+# 0, 1, 2, 3 / 북 , 동, 남 ,서 로 정의
+def turn_left():
+    global direction
+    direction -= 1
+    if direction == -1:
+        direction = 3
+
+dx = [-1,0,1,0]
+dy = [0,1,0,-1] # 북, 동, 남, 서로 맞춰줌
+
+turn_left()
+nx = x + dx[direction]
+ny = y + dy[direction] # 왼쪽으로 돌고 앞으로이동할 위치값 설정 / cf) 뒤로 이동은 ny = y - dy[direction]
+
+# 조건 만족 시 이동
+if d[nx][ny] ==0 and map[nx][ny] == 0:
+    d[nx][ny] = 1 # 방문처리
+    x = nx # x 이동
+    y = ny # y 이동
+    # 조건 탐색 후 이동 가능하면, 이동
+
+
+

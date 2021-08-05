@@ -325,4 +325,10 @@ print(d)
 e = np.dot(d,c)
 print(e)
 
+# !pip install pandas_profiling
+
+import pandas_profiling
+
+
+
 

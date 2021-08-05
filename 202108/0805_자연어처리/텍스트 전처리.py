@@ -239,4 +239,197 @@ re.findall('[가-힣]{4}', text)
 #띄어쓰기 전까지 가져와
 print(re.findall('[a-z]+', text))
 
+# #### 단어의 빈도수 계산하기
+#
+# - counter 사용
+# - 계수 정렬과 같은 메모리 비효율성을 초래할 수  있음
+# ( 희소 행렬 문제 )
+# - 단어 별로 체킹함으로 문장 단위에서 의미가 무시되는 단점
+
+# ####  정수 인코딩(integer Encoding)
+#
+# - Bag of Word(BOW)
+#
+
+# #### 람다(lambda)식
+#
+#
+# lambda 인자 : 표현식
+#
+# - def aa(x,y) : return x + y
+#     - aa(10,20)
+#
+# - 람다로 표현하기
+#     - (lambda x, y : x+y)(10,20)
+
+# #### Out -of -Vocabulary(단어 집합에 없는 단어) -> OOV : 6
+#
+# - 즉 word_to_index에 포함되지 않은 원본의 모든 단어들을 처리
+# - index 맵핑 -> [1,5] , [1, ??, 5], [1, 3, 5]
+# - ?? -> Out-Of-Vocabulary(단어 집합에 없는 단어) -> OOV : 6
+
+# +
+from nltk.tokenize import sent_tokenize
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+text = "A barber is a person. a barber is good person. a barber is huge person. he Knew A Secret! The Secret He Kept is huge secret. Huge secret. His barber kept his word. a barber kept his word. His barber kept his secret. But keeping and keeping such a huge secret to himself was driving the barber crazy. the barber went up a huge mountain."
+
+# 문장 토큰화
+text = sent_tokenize(text)
+print(text)
+
+vocab = {} # 파이썬의 dictionary 자료형
+sentences = []
+stop_words = set(stopwords.words('english'))
+
+for i in text:
+    sentence = word_tokenize(i) # 단어 토큰화를 수행합니다.
+    result = []
+
+    for word in sentence: 
+        word = word.lower() # 모든 단어를 소문자화하여 단어의 개수를 줄입니다.
+        if word not in stop_words: # 단어 토큰화 된 결과에 대해서 불용어를 제거합니다.
+            if len(word) > 2: # 단어 길이가 2이하인 경우에 대하여 추가로 단어를 제거합니다.
+                result.append(word)
+                if word not in vocab:
+                    vocab[word] = 0  # 단어가 vocab에 없으면 추가 단어(keys) 추가
+                vocab[word] += 1
+    sentences.append(result) 
+
+print(sentences) # 3글자 이상의 단어
+print()
+print(vocab) # 단어의 빈도수
+
+
+# 빈도수가 높은 순서대로 정렬
+# 딕셔너리.items()는 key,value를 튜플로 묶고 리스트로 바꿔주는 함수다
+
+vocab_sorted = sorted(vocab.items(), key = lambda x:x[1], reverse = True)
+print(vocab_sorted)
+
+# 높은 빈도수를 가진 단어일수록 낮은 정수 인덱스 부여
+word_to_index = {}
+i=0
+for (word, frequency) in vocab_sorted :
+    if frequency > 1 : # 정제(Cleaning) 챕터에서 언급했듯이 빈도수가 적은 단어는 제외한다.
+        i=i+1
+        word_to_index[word] = i
+print(word_to_index)
+
+vocab_size = 5
+words_frequency = [w for w,c in word_to_index.items() if c >= vocab_size + 1] # 인덱스가 5 초과인 단어 제거
+for w in words_frequency:
+    del word_to_index[w] # 해당 단어에 대한 인덱스 정보를 삭제
+print(word_to_index)
+
+word_to_index['OOV'] = len(word_to_index) +1
+
+encoded = []
+
+for s in sentences:
+    temp = []
+    for w in s:
+        try:
+            temp.append(word_to_index[w])
+        except KeyError:
+            temp.append(word_to_index['OOV'])
+    encoded.append(temp)
+print(encoded)
+# -
+
+# ####  Collections.counter 사용하기
+
+from collections import Counter
+print(sentences)
+
+
+words = sum(sentences, [])
+print(words)
+
+
+vocab = Counter(words)
+print(vocab)
+
+vocab_size = 5
+vocab = vocab.most_common(vocab_size) # 등장 빈도수가 높은 상위 5개의 단어만 저장
+vocab
+
+
+# 높은 빈도수를 가진 단어일수록 낮은 정수 인덱스 부여
+word_to_index = {}
+i=0
+for (word, frequency) in vocab_sorted :
+    if frequency > 1 : # 정제(Cleaning) 챕터에서 언급했듯이 빈도수가 적은 단어는 제외한다.
+        i=i+1
+        word_to_index[word] = i
+print(word_to_index)
+
+# +
+word_to_index['OOV'] = len(word_to_index) +1
+
+encoded = []
+
+for s in sentences:
+    temp = []
+    for w in s:
+        try:
+            temp.append(word_to_index[w])
+        except KeyError:
+            temp.append(word_to_index['OOV'])
+    encoded.append(temp)
+print(encoded)
+
+# +
+from collections import Counter
+print(sentences)
+
+words = sum(sentences, [])
+print(words)
+
+vocab = Counter(words)
+print(vocab)
+
+vocab_size = 5
+vocab = vocab.most_common(vocab_size) # 등장 빈도수가 높은 상위 5개의 단어만 저장
+vocab
+
+# 높은 빈도수를 가진 단어일수록 낮은 정수 인덱스 부여
+word_to_index = {}
+i=0
+for (word, frequency) in vocab_sorted :
+    if frequency > 1 : # 정제(Cleaning) 챕터에서 언급했듯이 빈도수가 적은 단어는 제외한다.
+        i=i+1
+        word_to_index[word] = i
+print(word_to_index)
+
+word_to_index['OOV'] = len(word_to_index) +1
+
+encoded = []
+
+for s in sentences:
+    temp = []
+    for w in s:
+        try:
+            temp.append(word_to_index[w])
+        except KeyError:
+            temp.append(word_to_index['OOV'])
+    encoded.append(temp)
+print(encoded)
+# -
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

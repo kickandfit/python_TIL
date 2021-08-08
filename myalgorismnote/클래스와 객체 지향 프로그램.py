@@ -228,6 +228,8 @@ print(str(my_car))
 print()
 print(my_car)
 print()
+
+
 # -
 
 # #### keypoint ( __ repr __ vs __ str __ )
@@ -236,5 +238,110 @@ print()
 # - __ str __ 의 결과는 읽을 수 있어야 함 . __ repr __ 의 결과는 모호하지 않아야 함
 # - 항상 __ repr __ 을 추가하라. __ str __ 의 기본 구현은 __ repr __ 을 호출하기만 함
 #
+
+# # 자신만의 예외 클래스 정의하기
+#
+# - 사용자 정의 예외 처리 클래스를 작성하는 것은 큰 가치가 있음
+# - 잠재적인 에러 사례가 분명하게 드러나게 되므로 결과적으로 함수와 모듈을 유지 보수하기 더 쉬워짐
+# - 사용자 정의 에러 타입을 사용하여 디버깅 정보를 추가 제공 가능
+#
+
+# #### 아래 코드 설명
+# - ValeError와 같은 '상위 수준' 일반 예외 클래스를 사용하는 데는 단점이 존재
+# - 함수를 라이브러리로 제공했고 내부를 잘 알지 못하는 팀원이 호출한다면, 이 검사를 실패하면 디버그 스택 추적에서 도움이 되지 않음
+
+def validatae(name):
+    if len(name)<10:
+        raise ValueError
+
+
+# #### 보완코드
+
+# +
+class NameTooShortError(ValueError):
+    pass
+
+def validate(name):
+    if len(name)<10:
+        raise NameTooShortError(name)
+
+
+# -
+
+validate('jane')
+
+
+class BaseValidationError(ValueError):
+    pass
+class NameTooShortError(BaseValidationError):
+    pass
+class NameTooLongError(BaseValidationError):
+    pass
+class NameTooCuteError(BaseValidationError):
+    pass
+
+
+try:
+    validate(name)
+except BaseValidationError as err :
+    handle_validation_error(err)
+
+# #### keypoint ( 자신 만의 예외 클래스 정의하기 )
+#
+# - 고유한 예외 타입을 정의하면 코드의 의도가 좀 더 명확하게 표시되고 디버그하기 쉬워짐
+# - 파이썬 내장 Exeption 클래스 또는 ValueError나 KeyError 와 같은 구체적인 예외 클래스에서 사용자 정의 예외를 파생
+# - 상송을 사용하여 논리적으로 그룹화된 예외 계층을 정의
+
+# # 객체 복제하기
+#
+# - 파이썬의 할당문(assignment statement)은 객체의 사본을 만들지 않으며 이름만 연결
+# - 변경할 수 없는 객체의 경우에는 일반적으로 차이가 없음
+# - 변경 가능한 객체 또는 변경 가능한 객체의 컬렉션(collection)을 다룰 때면 이러한 객체의 '실체 사본' 또는 '복제본'을 만드는 방법이 필요
+
+# 컬렉션 복사하는 방법
+#
+# - 리스트, 딕셔너리, 세트 같은 변경 가능한 내장 컬렉션은 기존 컬렉션을 팩터리 함수에 건에 복사함
+
+new_list = list(original_list)
+new_dict = dict(original_dict)
+new_set = set(original_set)
+
+# #### 이 메서드의 문제
+#
+# - 사용자 정의 객체는 처리하지 못하며, 그보다 더 근본적으로 '얉은 복사본'을 만듬
+# - '얕은 복사'와 '깊은 복사'의 차이
+#     - '얕은 복사'
+#         - 새 컬렉션 객체를 생성한 다음 원래 객체에서 찾은 자식 객체에 대한 참조로 채우는 것
+#         - '얕은 복사'는 '한 단계 깊이'까지만 복사함
+#         - 복사 프로세스가 재귀적으로 진행되지 않음으로 자식 객체 자체의 복사본을 만들지 않음
+#         
+#     - '깊은 복사'
+#         - 복사 프로세스를 재귀적으로 처리
+#         - 새 컬렉션 객체를 생성한 다음 원래 객체에서 찾은 자식 객체의 복사본을 재귀적으로 채우는 것을 의미함
+#         - 객체의 전체 객체 트리를 따라 그 자식들까지 완전히 독립적으로 복사된 복제본을 만들 수 있음
+
+# 얕은 복사 만들기
+xs = [[1,2,3],[4,5,6],[7,8,9]]
+ys = list(xs) # 얕은 복사 만들기
+
+
+xs
+
+ys
+
+xs.append(['new student'])
+xs
+
+xs[1][0] = 'X'
+ys
+
+# 깊은 복사본 만들기
+# copy.copy() 얇은 복사본 만들기
+import copy
+xs = [[1,2,3],[4,5,6],[7,8,9]]
+zs = copy.deepcopy(xs)
+
+# #### 의미
+# - 내장 컬렉션의 경우 간단히 리스트, 딕셔너리, 세트의 팩터리 함수를 이용하여 얕은 복사본을 사용하는 것이 더 파이썬다운것
 
 

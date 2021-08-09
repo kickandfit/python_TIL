@@ -654,7 +654,7 @@ class Dog:
     
     def __init__(self, name):
         self.name = name # <- 인스턴스 변수
-        
+
 
 
 # #### 새 Dog 인스턴스를 만들면 각 인스턴스는 name이라는 인스턴스 변수를 얻음
@@ -718,12 +718,240 @@ jack.num_legs, jack.__class__.num_legs
 
 # - CountedObject는 공유 카운터 역할을 하는 num_instances 를 클래스 변수를 갖고, 클래스가 선언되면 카운터가 0으로 초기화된 채로 있음
 
+# +
 class CountedObject:
     num_instances = 0
     
     def __init__(self):
         self.__class__.num_instances += 1
+    
+CountedObject.num_instances
 
 
+# +
+# 주의 잘못 짠 코드
+
+class countedobject:
+    num_instances =0 
+    
+    def __init__(self):
+        self.num_instances +=1 #!!! 오류
+        
+# 이건 인스턴스 변수가 클래스 변수를 가릴뿐
+# 클래스변수를 업데이트하지 못함
+
+
+# -
+
+# #### keypoint( 클래스 변수 vs 인스턴스 변수 )
+#
+# - 클래스 변수는 모든 클래스 인스턴스에서 공윻는 데이터를 위한 변수
+#     - 특정 인스턴스가 아닌 클래스에 속하며 클래스의 모든 인스턴스 간의 공유
+# - 인스턴스 변수는 각 인스턴스에 고유한 데이터를 위한 것
+#     - 개별 객체 인스턴스에 속하며 클래스의 다른 인스턴스와 공유X
+#     - 각 인스턴스 변수는 각 인스턴스에 배정된 고유한 저장소를 갖음
+#     
+# - 클래스 변수는 동일한 이름의 인스턴수 변수에 의해 '가려질' 수 있기 때문에 (우연히) 덮어써서 버그나 이상한 동작을 유발할 수 있음
+
+# #### 인스턴스 메서드, 클래스 메스드, 정적 메서드
+
+class Myclass:
+    def method(self):
+        return 'instance method called', self
+    
+    @classmethod
+    def classmethod(cls):
+        return 'class method called', cls
+    
+    @staticmethod
+    def staticmethod():
+        return 'static method called'
+
+
+# # 인스턴스 메스드
+#
+# - Myclass의 첫 번째 메서드인 method는 일반 인스턴스 메스드
+# - self라는 단 하나의 매개 변수를 받음.
+#     - 이 변수는 method가 호출될 때의 Myclass 인스턴스를 가리킴
+#     - 인스턴스 메서드는 하나이상의 매개 변수를 받아드릴 수 있음
+# - self 매개 변수르 통해 인스턴스 메서드는 동일한 객체에 정의된 속성 및 다른 메서드에 자유롭게 접근 가능
+#     - 객체의 상태를 수정할 수 있도록 해주는 강력한 기능
+# - 객체 상태를 수정할 수 있을 뿐 아니라 인스턴스 메서드는 self.__ class __ 속성을 통해 클래스 자체에 접근할 수 있음
+#     - 인스턴스 메서드가 클래스 상태를 수정할 수도 있음
+#    
+
+# # 클래스 메서드
+#
+# - Myclass.classmethod와 비교
+#     - @classmethod 데코레이터는 해당 메서드가 클래스 메서드임을 표시하는 역할
+#     - @classmethod는 클래스 메서드를 선언하기 위해 써야함
+# - 객체 인스턴스를 가리키는 self 매개 변수 대신, 클래스 메서드는 클래스를 가리키는 cls 매개 변수를 받음
+# - 클래스 메서드는 이 cls 인자에만 접근할 수 있기 때문에 객체 인스턴스 상태를 수정할 수 없음
+#     - 객체 인스턴스를 수정하려면 self에 접근할 수 있어야함
+#     - 클래스 메서드는 여전히 클래스의 모든 인스턴스에 적용되는 클래스 상태를 수정 가능
+#     
+
+# # 정적 메서드
+#
+# - Myclass.staticmethod는 @staticmethod 데코레이터를 달아 지정
+#     - @staticmethod는 정적 메서드를 선언하기 위해 써야함
+# - 정적 메서드도 임의 개수의 매개 변수를 받아드릴 수 있지만, self, cls 매개 변수를 사용하지 않음
+# - 정적 메서드는 객체 상태나 클래스 상태를 수정할 수 없음
+#      - 정적 메서드는 접근할 수 있는 데이터가 제한됨
+#      - 주로 메서드의 네임스페이스를 해당 클래스로 한정하는 용도
+
+# #### 클래스의 인스턴스 만들기
+# - 각각의 메서드 호출하기
+# - Myclass의 각 메서드는 해당 메서드가 클래스 또는 객체의 어느 부분에 접근할 수 있는지, 그리고 무슨 일이 벌어지는지 추적하는 데 사용할 수 있는 정보를 담고 있는 튜플을 반환하는 방식으로 구현
+
+# #### 인스턴스 메서드
+
+# - 이 경우 method라는 인스턴스 메서드는 self 인자를 통해 객체 인스턴스 Myclass instance로 출력됨에 접근했음을 알 수 있음
+#
+# - 메서드가 호출되면 self 인자를 인스턴스 객체 obj로 바꿈
+# - 간편 문법인 dot-call 문법 대신 인스턴스 객체를 '직접' 전달해도 같은 결과
+# - 즉 obj.method() 대신 Myclass.method(obj) 를 해도 똑같음
+
+obj = Myclass()
+obj.method()
+
+# - 인스턴스 메서드는 self.__ class __ 속성을 통해 '클래스 자체'에 접근 할 수 있음
+# - 접근 제한 측면에서 인스턴스 메서드를 강력하게 함
+# - 객체 인스턴스 및 클래스 자체의 상태를 자유롭게 수정 가능
+#
+
+# #### 클래스 메서드
+
+# - classmethod()를 호출하면 <Myclass instance> 객체에는 접근할 수 없으며 클래스 자체를 나타내는 __ main __ .Myclass 객체에만 접근할 수 있음을 보여줌 ( 클래스 자신까지도 객체 )
+# - Myclass.classmethod()를 호출할 때 파이썬이 클래스 함수의 첫 번째 인자로 자동 전달하는 방법에 주목
+# - 점 문법을 사용해 메서드 호출시 아래 동작 개시
+#     - 인스턴스 메서드의 self 매개 변수도 동일한 방식으로 작동
+# - 이러한 매개 변수를 self 및 cls라고 이름 지은 것은 단지 관례일 뿐
+#     - the_object와 the_class라는 이름을 붙여도 상관 없음
+# - 중요한 것은 해당 메서드의 매개 변수 목록에서 첫 번째로 위치한다는 점
+
+obj.classmethod()
+
+# #### 정적 메서드
+
+# - 객체 인스턴스에서 정적 메서드 호출 가능
+# - 파이썬이 정적 메서드의 접근 제한을 강제하는 방법은 단순
+#     - 점 문법 호출 시 self나 cls 인자를 전달하지 않는 것
+#     - 정적 메서드가 객체인스턴스 상태 또는 클래스 상태에 접근할 수 없음을 보장
+# - 정적 함수는 일반 함수처럼 작동하지만 클래스(그리고 모든 인스턴스)의 네임스페이스에 귀속
+
+obj.staticmethod()
+
+# #### 객체 인스턴스 없이 클래스 자체에서 각 타입 메서드 호출하기
+
+# - classmethod()나 staticmethod()는 호출가능
+# - 인스턴스 메서드 method()를 호출하려고 하면 TypeError
+#     - 객체 인스턴스를 만들지 않았고 클래스 자체에서 직접 인스턴스 메서드를 호출하려 했기 때문
+#     - 즉 self 인자를 채울 수 있는 방법이 없음으로 호출이 TypeError 예외로 실패하는 것
+#     
+
+Myclass.classmethod()
+
+Myclass.staticmethod()
+
+Myclass.method()
+
+
+# #### classmethod로 맛있는 피자 만들기
+
+class Pizza:
+    def __init__(self, ingredients):
+        self.ingredients = ingredients
+    
+    def __repr__(self):
+        return f'Pizza({self.ingredients!r})'
+    @classmethod
+    def margherita(cls):
+        return cls(['mozzarella','tomatoes'])
+    
+    @classmethod
+    def prosciutto(cls):
+        return cls(['mozzarella', 'tomatoes', 'ham'])
+
+
+Pizza(['cheese', 'tomatoes'])
+
+# - 주목 해야할 부분
+#     - 팩터리 메서드인 margherita와 prosciutto에서 Pizza의 생성자를 직접 호출하는 대신 cls 인자를 활용
+#     - 중복 배제 원칙을 따르기 위한 트릭
+#     - 이 클래스의 이름을 변경하고 싶더라도 모든 팩터리 메서드에서 일일히 생성자 이름을 수정하지 않아도 됨
+#     
+
+# #### 팩터리 메서드를 사용하여 원하는 데로 구성한 새로운 Pizza 객체 만들 수 있음
+#
+# - 내부적으로 동일한 __ init __ 생성자를 사용하며 다양한 재료를 기억하기 위한 손쉬운 방법
+# - 실질적인 클래스 생성자를 정의할 수 있음
+# - 클래스당 하나의 __ init __ 메서드만을 허용
+#     - 클래스 메서드를 사용하면 필요한 만큼 많은 대체 생성자 추가가능
+#     
+
+Pizza.margherita()
+
+Pizza.prosciutto()
+
+# ### 정적 메서드 사용법
+
+# - radius 인자를 허용하도록 생성자와 __ repr __ 을 수정
+# - 피자 크기를 계산하고 반환하는 area() 인스턴스 메서드 추가
+#     - @property를 사용해 속성으로 만들기에 좋은 후보임은 맞음
+# - area() 메서드는 잘 알려진 공식을 사용하여 원 면적을 직접 계산하는 대신 별도의 circle_area() 메서드를 사용하여 계산
+#
+
+# +
+import math
+
+class Pizza:
+    def __init__(self, ingredients, radius):
+        self.ingredients = ingredients
+        self.radius = radius
+    
+    def __repr__(self):
+        return (f'Pizza({self.ingredients},' 
+                f'{self.radius})')
+    
+    def area(self):
+        return self.circle_area(self.radius)
+    
+    @staticmethod
+    def circle_area(r):
+        return r**2*math.pi
+    
+
+
+# -
+
+p = Pizza(['mozzarella', 'tomatoes'], 4)
+p
+
+p.area()
+
+p.circle_area(4) # 4를 빼면 오류
+
+# - 정적 메서드가 제공하는 몇 가지 장점을 설명
+#     - 정적 메서드는 클래스 또는 인스턴스 상태에 접근 불가
+#     - 정적 메서드가 cls, self 인자를 취하지 않기 때문
+#     - 특정한 메서드가 주변의 다른 모든 것과 독립적일 수 있음
+#     
+# - 앞의 circle_area()가 클래스 또는 클래스 인스턴스를 어떤 식으로든 수정할 수 없음
+# ( 물론 전역 변수를 사용하여 이 한계를 해결 가능 _
+#
+# - 이 특성이 유용한 이유
+#     - 정적 메서드라고 표시하는 것이 해당 메서드가 클래스 또는 인스턴스 상태를 수정하지 않음
+#     - 파이썬 런타임에 의해 강제됨
+#     - 클래스 아키텍처의 해당 부분에 관한 의사소통을 명확하게 해줌
+#     - 즉 정적 메서드와 클래스 메서드를 사용하는 것은 개발자의 의도를 전달하는 동시에 개발자가 자신의 의도를 강제해 대부분의 실수나 버그로 인한 설계를 깨뜨리지 않도록함
+
+# #### keypoint( 요점 정리 )
+# - 인스턴스 메서드는 클래스 인스턴스가 필요하며 self를 통해 인스턴스에 접근할 수 있음
+# - 클래스 메서드는 클래스 인스턴스가 필요하지 않음.
+#     - 인스턴스( self ) 에는 접근 불가, but cls를 통해 클래스 자체에 접근 가능
+# - 정적 메서드는 cls 또는 self에 접근할 수 없음
+#     - 일반 함수처럼 작동하지만 자신을 정의한 클래스의 네임스페이스에 속함
+# - 정적 및 클래스 메서드는 ( 어느 정도까지는 ) 클래스 설계에 대한 개발자의 의도를 전달하고 강제함.
 
 

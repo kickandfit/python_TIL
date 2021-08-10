@@ -784,4 +784,155 @@ s.get_nowait()
 # - collections.deque는 안전하고 빠른 범용 스택 구현을 제공함
 # - 내장된 list 타입은 스택으로 사용할 수 있지만, append(), pop()을 사용 권장( 삽입, 제거 )
 
+# # 큐 ( FIFO )
+#
+# - 선입선출 방식의 삽입과 삭제를 지원하는 객체 컬렉션
+# - 삽입, 삭제는 'enqueue', 'dequeue'로 불림
+# - 리스트나 배열과 달리 큐는 내부 객체에 대한 임의 접근을 허용하지 않는 것이 일반적
+#     - 트리나 그래프 데이터 구조에서 너비 우선 탐색은 큐를 활용한 알고리즘
+# - 스케줄링 알고리즘은 우선순위큐를 내부적으로 사용
+
+# #### list : 끔직하게 느린 큐
+# - O(N) 시간을 요구하므로 큐로 사용하기에 느림
+
+q= []
+q.append('eat')
+q.append('sleep')
+q.append('code')
+q
+
+# Careful : Too slow!
+q.pop(0)
+
+# #### collections.deque: 빠르고 강력한 큐
+#
+# - 임의 요소로 접근하는 경우만 아니면 탁월한 성능
+# - 큐 데이터 구조를 찾는 다면 가장 좋은 선택
+
+from collections import deque
+q = deque()
+q.append('eat')
+q.append('sleep')
+q.append('code')
+q
+
+q.popleft()
+
+# #### queue.Queue: 병렬 컴퓨팅을 위한 잠금 체계
+#
+# - queue.Queue는 동기 방식으로 구현되었으며 동시에 여러 생산자와 소비자에게 잠금체계 제공
+# - 다중 생산자/다중 소비자 큐를 구현하는 클래스 포함
+# - 불필요한 부하 발생 가능성
+# - 잠금 체계가 필요할 때에만 선택
+
+# +
+from queue import Queue
+
+q = Queue()
+q.put = 'eat'
+q.put = 'sleep'
+q.put = 'code'
+q
+# -
+
+q.get()
+
+# #### multiprocessing.Queue: 공유 작업 큐
+#
+# - 작업자가 동시에 처리할 수 있게 해 주는 공유 작업 큐
+# - 단일 인터프리터 프로세스에서 일부 병렬 실행을 못하게 제한하는 전역 인터프리터 잠금(GIL) 때문에 CPython에서는 프로세스 기반 병렬화가 널리 사용
+# - 프로세스 간에 데이터를 공유하기 위한 특별한 큐 구현인 multiprocessing.Queue를 사용하면 GIL 제한을 해결하고 여러 프로세스 간에 작업을 쉽게 배포 가능
+# - 이런 타입의 큐는 프로세스 경계를 넘어서 피클(pickle) 가능한 객체를 저장하고 전송가능
+
+# +
+from multiprocessing import Queue
+
+q= Queue()
+q.put('eat')
+q.put('sleep')
+q
+# -
+
+q.get()
+
+# #### keypoint ( 큐 )
+#
+# - 파이썬의 핵심 언어 및 표준 라이브러리는 여러 가지 큐 구현을 가짐
+# - list 객체는 큐로 사용할 수 있음 성능이 좋지 않음
+# - 병렬 처리 지원을 찾고 있지 않다면, collections.deque
+
+# # 우선 순위 큐
+#
+# - totally ordered set 으로 된 키(가중치가 있는)가 있는 레코드 집합을 관리하는 컨테이너 데이터 구조
+# - 레코드 집합에서 '가장 작은' 키 또는 '가장 큰' 키를 사용하여 레코드에 빠르게 접근가능
+# - 우선 순위 큐는 큐의 변형
+
+# #### list: 수동으로 정렬된 큐 유지하기
+#
+# - 정렬된 list를 사용하면 가장 작은 항목 또는 가장 큰 항목을 신속하게 찾아서 삭제 가능, but 새 항목을 삽입하는 데 느림
+# - 삽입 지점은 표준 라이브러리의 bisect.insort를 사용하여 찾을 수 있음
+# - 순서를 유지하려면 O(nlogn) 시간이 걸림
+# - 새 항목이 삽입될 때 수동으로 리스트를 다시 정렬 해야함
+#
+
+# +
+q = []
+q.append((2, 'code'))
+q.append((1, 'eat'))
+q.append((3, 'sleep'))
+
+# careful : 재정렬할 때마다
+# 새소요가 삽입된다.
+# bisect.insort()를 사용해 볼 것
+
+q.sort(reverse = True)
+
+while q:
+    next_item = q.pop()
+    print(next_item)
+    
+# -
+
+# #### heapq: 리스트 기반 이진 힙
+#
+# - 일반 list에 의해 구현된 이진 힙
+# - 가장 작은 항목의 삽입과 추출을 O(logn) 시간에 해냄
+# - 우선 순위 큐를 구현하기에 좋은 선택
+# - 최소 (min) 힙 구현만 제공
+
+# +
+import heapq
+
+q= []
+heapq.heappush(q, (2, 'code'))
+heapq.heappush(q, (1, 'eat'))
+
+while q:
+    next_item = heapq.heappop(q)
+    print(next_item)
+# -
+
+# #### queue.PriorityQueue: 아름다운 우선순위큐
+#
+# - 내부적으로 heapq를 사용하고 동일한 시간과 공간 복잡성을 공유
+# - 다른 점은 PriorityQueue는 동기 방식이며 동시에 여러 생산자와 소비자를 지원하는 잠금 체계를 제공
+# - 용도에 따라 도움이 될 수 있고 프로그램을 느리게 할 수 있음
+
+# +
+from queue import PriorityQueue
+
+q = PriorityQueue()
+q.put((2, 'code'))
+q.put((1, 'eat'))
+
+while not q.empty():
+    next_item = q.get()
+    print(next_item)
+# -
+
+# #### keypoint ( 우선 순위 큐 )
+#
+# - queue.PriorityQueue는 객체 지향 인터페이스와 그 의도를 명확하게 나타내는 이름 덕분에 돋보임
+# - 잠금 부하를 피하려면 heapq 모듈을 사용하는 것도 좋음
+
 

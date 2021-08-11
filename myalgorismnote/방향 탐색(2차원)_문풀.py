@@ -48,13 +48,14 @@ def move(x,y, i):
 
 # for dir in range(5):
 #     move(4,4,dir)
+move(0,0, 1)
 # +
 graph = [[0, 0, 1], [0, 1, 0], [1, 0, 1]]
 n, m = 3,3
 
 def dfs(x, y):
     
-    if x<= -1 or x>=n or y<=-1 or y>=m:
+    if x<= -1 or x>n or y<=-1 or y>m:
         return False
     
     # 이부분이 방문 여부 묻고 처리하는 부분

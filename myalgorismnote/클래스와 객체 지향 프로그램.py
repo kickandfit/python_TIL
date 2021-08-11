@@ -37,7 +37,8 @@ print(a is b) # 동일한 지를 확인
 # a와 c는 동등하지만 동일하지는 않다
 # 서로 다른 객체를 가리키고 있음
 
-c = list(a)
+c = list(a) # 얕은 복사가 일어났음
+# 재할당이라고 인식
 print(c)
 print()
 print(a==c)
@@ -101,8 +102,10 @@ my_car
 
 print(my_car)
 print(type(my_car))
+print()
 print(str(my_car))
 print(type(str(my_car)))
+print()
 print(f'{my_car}')
 print(type(f'{my_car}'))
 
@@ -191,7 +194,7 @@ repr(today)
 #     - def __ repr __ (self): return f'Car({self.color!r}, {self.mileage!r})'
 #     - !r 변환 플래그를 사용하며 출력 문자열이 str(self.color)와 str(self.mileage) 대신 repr(self.color)와 repr(self.mileage)
 #         - 다만, 형식 문자열 내에서 클래스명을 반복 사용한다는 것이 아쉬움
-#         - 이 반복을 피하기 위해 __ class __ . __ namge __ 속성을 사용함
+#         - 이 반복을 피하기 위해 __ class __ . __ name __ 속성을 사용함
 #             - 이 방식은 클래스 이름이 변경 될때, __ repr __ 구현을 수정하지 않아도 됨
 #             - 중복 배체 원칙을 따르게 됨
 

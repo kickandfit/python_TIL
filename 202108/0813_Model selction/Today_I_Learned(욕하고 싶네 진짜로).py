@@ -494,9 +494,23 @@ fakeclf.fit(X_train , y_train)
 fakepred = fakeclf.predict(X_test)
 print('\n모든 예측을 0으로 하여도 정확도는:{:.3f}'.format(accuracy_score(y_test , fakepred)))
 
+for j in range(8):    
+    for i in range(j*8, (j+1)*8):
+        if digits.data[0][i] == 0:
+            print(" ", end = " ")
+        else:
+            print(int(digits.data[0][i]), end = ' ')
+    print()
+    
 
-
-
+     5 13 9  1      
+    13 15 10 15 5   
+  3 15  2    11 8   
+  4 12       8  8   
+  5  8       9  8   
+  4 11    1 12  7   
+  2 14  5 10 12     
+    6  13 10       
 
 
 

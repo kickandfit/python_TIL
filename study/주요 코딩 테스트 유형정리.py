@@ -101,5 +101,17 @@ for a, b, c in combinations(N, 3):
 print (result)
 
 # -
+# #### 분해합
+
+
+# +
+from itertools import product
+n = int(input())
+result = 1000
+num = [i for i in range(10)]
+
+        
+
+# -
 
 

@@ -84,7 +84,7 @@ Backpropagation과 결합해 Guided-Grad-CAM으로도 사용 가능
 
       return feature.squeeze()
 
-# #### skin_Detection 방법 1( 9/1 )
+# #### skin_Detection 방법 1
 #
 # - opencv 방법
 #     - 목적이 skin_Detection 을 한 후에

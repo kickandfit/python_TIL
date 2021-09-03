@@ -1140,7 +1140,7 @@ def dijkstra(start):
             if cost < distance(j[0]):
                 distance[j[0]] = cost
 
-        
+
 
 # +
 # 개선된 dijkstra
@@ -1293,17 +1293,342 @@ def bellman_ford(graph, start):
     return distance, predecessor
 
 print(bellman_ford(graph, "A"))
+
+
 # -
 
+# #### 9/2 그래프 이론( 여기를 제일 안해가지고 제일 못하니까 해보자 )
+#
+# - 현대에서 이게 나와가지고 이번에
+# - 다음번에는 잘준비해보자
+
+# #### 그래프 이론을 떠올려야 하는 힌트와 Tip
+# - 다른 개체와 연결되어 있다 라는 문구
+#     - EX) 여러 도시가 연결되어 있다
+# - 트리 자료 구조가 가장 많이 사용됨
+# - 최소 힙의 경우 항상 부모 노드가 자식 노드보다 크기가 작은 자료구조로 트리 자료 구조
+# - 트리는 (전통적으로는 무방향 그래프로 간주) 컴퓨터 공학에서는 방향 그래프로 간주
+#     - 트리는 비순환, 루트 노드 존재, 부모와 자식관계, 계층 모델
+
+# #### 서로소 집합
+#
+# - 서로소 부분 집합들로 나누어진 원소들의 데이터 처리를 하기 위한 자료구조
+# - 서로소 집합 자료구조는 union과 find 연산
+
+# +
+# 특정 원소가 속한 집합을 찾기
+def find_parend(parent, x):
+    
+    # 루트 노드가 아니라면, 루트 노드를 찾을 때까지 재귀적으로 호출
+    if parent[x] != x:
+        return find_parent(parent, parent[x])
+    
+    return x
+
+# 두 원소가 속한 집합을 합치기
+def union_parent(parent, a,b):
+    
+    # 두 집합을 가져와서 parent를 찾어
+    a = find_parent(parent, a)
+    b = find_parend(parent, b)
+    if a<b:
+        parent[b] = a
+    else:
+        parent[a] = b
+        
+# 이게 핵심이네
+# 그니까 정보를 입력 받으면서 union 연산을 진행하는거지?
+# find 는 말그대로 그 집합이 속한 집합을 찾는거고
+# 부모 테이블이랑은 조금 다른 이야기네, 결국에 이코드는 타고타고 가는 구조고
+
+
+# -
+
+# 개선된 서로서 집합
+def find_parent(parent, x):
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+# 즉 이건 경로 압축, 그 원소가 속한 집합에 대해 모두 부모를 가르키게함
+# 이걸 쓰면 타고타고 가는게 아니라 부모 테이블 역시 다 다 루트 노드를 가르키게 되겠네
+
+
+# #### 서로소 집합을 활용한 사이클 판별
+# - 방향있는 그래프에서는 사이클 여부는 DFS를 이용하여 판별가능
+
+# +
+#싸이클 판별여부
+cycle = False
+
+for i in range(e): # e 는 간선의 개수
+    a,b = map(int, input().split())
+    
+    if find_parent(parent, a) == find_parent(parent, b):
+        clcle = True
+        break
+        
+    else:
+        union_parent(parent, a, b)
+# 이게 전체 코드인데 어떤 내용이냐면
+# 사이클이 루트 노드가 다르잖아? 그럼 합쳐
+# 근데 루트 노드가 같잖아? 그럼 사이클이 발생한거야
+# 예를 들어서 1 2 3 노드가 서로 연결되어 있다고 하면
+# 2 ->1 , 3->1 로 유니온 연산이 진행된다음 2 와 3을 비교 하는데 2,3의 루트 노드는 1로 같음으로 사이클이 발생했다고 보는 것
+# -
+# #### 9/3 신장 트리 / 크루스칼
+# - 기본 알고리즘 하고 오늘 이부분 문제 풀자잉
+
+
+# +
+import sys
+
+# input = sys.stdin.readline
+def find_parent(parent, x):
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a> b:
+        parent[a] = b
+    else:
+        parent[b] = a
+
+# 노드의 개수와 간선의 개수 받기        
+v, e = map(int, input().split())
+parent = [0] * (v+1)
+
+# 모든 간선을 담을 리스트와 최종 비용을 담을 함수
+edges = []
+result = 0
+
+# 부모 테이블상에서, 부모를 자기 자신으로 초기화
+for i in range(1, v+1):
+    parent[i] = i
+    
+# 모든 간선에 대한 정보를 입력받기
+for _ in range(e):
+    a,b,cost = map(int, input().split())
+    edges.append((cost,a,b))
+
+# 비용순으로 정렬
+edges.sort()
+
+# 간선을 하나씩 확인하며
+for edge in edges:
+    cost, a, b = edge
+    # 사이클이 발생하지 않는 경우에만 집합에 포함
+    if find_parent(parent,a) != find_parent(parent, b):
+        union_parent(parent, a, b)
+        result += cost
+
+print(result)
+
+# 뭐야 크루스칼은 거의 그냥 find, union, 사이클 판별이네
+# 거기에 cost 추가 해놓구
+# cost별로 정렬 해놓고
+# 비용 큰 애부터 꺼내서 합치고 cost만 더해주는 건데?
+# -
+
+# #### 위상정렬
+# - 방향 그래프의 모든 노드를 '방향성에 거스르지 않도록 순서대로 나열'
+
+# +
+from collections import deque
+
+# 노드의 개수와 간선의 개수 받기        
+v, e = map(int, input().split())
+indegree = [0] * (v+1)
+# 각 노드에 연결된 간선 정보를 담기 위한 연결 리스트(그래프) 초기화
+graph = [[] for i in range(v+1)]
+
+# 방향 그래프에 대한 모든 간선 정보 입력
+for _ in range(e):
+    a, b = map(int, input().split())
+    graph[a].append(b)
+    # 진입차수 증가
+    indegree[b] += 1
+    
+# 위상 정렬 함수
+def topology_sort():
+    result = []
+    q = deque()
+    
+    # 처음 시작할 때 진입차수가 0인 노드를 큐에 삽입
+    for i in range(1, v+1):
+        if indegree[i] == 0:
+            q.append(i)
+    
+    # q가 빌 때까지 반복
+    while q:
+        
+        now = q.popleft()
+        result.append(now)
+        # 해당 원소와 연결된 노드들의 진입차수에서 1 빼기
+        for i in graph[now]:
+            indegree[i] -= 1
+            
+            # 새롭게 진입차수가 0이 되는 노드를 큐에 삽입
+            if indegree[i] == 0:
+                q.append(i)
+                
+        # 위상 정렬을 수행한 결과 출력
+        for i in result:
+            print(i, end = ' ')
+        print('다음')
+            
+topology_sort()
+
+# 그니까 처음 입력할때
+# 차수 입력해주고 늘려준다음에
+# 차수가 0 인 애부터 큐에 넣고 다음으로 넘어가면서
+# 진입 차수 줄여가면서 0 되면 다시 큐에 넣고 빼
+# 큐에서 뺀 값은 결과 리스트에 넣어주고 그 값을 활용해서
+# 현재 그래프의 정보에 대해 판단하는 알고리즘 이네
+# -
+
+# #### 9/3 더 알아두면 좋은 알고리즘( 이 부분이 책의 마지막 부분이긴해 )
+# - 소수판별
+# - 에스토스테네스의 체
+# - 투 포인터
+
+# #### 소수 판별
+#
+# - 2 보다 큰 자연수 중에서 1과 자기 자신을 제외한 자연수로는 나누어 떨어지지않는 자연수
+
+# 기본 아이디어
+def is_prime_number(x):
+    
+    for i in range(2, x):
+        
+        if x % i == 0:
+            return False
+    return True
+
+
+# +
+# 개선된 소수 판별 알고리즘
+# 그니까 어쩐 수는 약수가 있다면 대칭을 이룸
+# 그럼 재미있는 것은 제곱근 까지만 확인하면 뒤에는 확인할 필요가 없다는거지
+
+import math
+
+def is_prime_number(x):
+    
+    for i in range(2, int(math.sqrt(x)+ 1)):
+        
+        if x % i == 0:
+            return False
+    return True
 
 
 
+# -
 
+# #### 에스토스테네스의 체
 
+# +
+import math
 
+n = 1000
+array = [True for i in range(n+1)]
 
+for i in range(2, int(math.sqrt(n)+1)):
+    if array[i]:
+        j = 2 # 이게 배수를 건들기 위한 것
+        
+        while i*j <= n:
+            array[i*j] = False
+            j += 1
+                   
+# for i in range( 2, n+1):
+#     if array[i]:
+#         print(i, end = ' ')
 
+# 재밌네 이거
+# 그니까 True False Table을 만들고
+# 배수 지워가면서 True 인 애들에 대해서만 계속해라 이거잖아
+# 재밌네
+# -
 
+# #### 투포인터
+# - 순차적으로 접근해야할 때 2개의 점의 위치를 기록하면서 처리 하는 알고리즘
+
+# +
+n = 5
+m = 5 # 찾고자 하는 부분합
+data = [1, 2, 3, 2, 5]
+
+count = 0
+interval_sum = 0
+end = 0
+
+# start를 차례대로 증가시키면서 반복
+for start in range(n):
+    # end를 가능한 만큼 이동시키기
+    while interval_sum < m and end < n :
+        interval_sum += data[end]
+        end += 1
+    
+    # 부분합이 m일 때, 카운트 증가
+    if interval_sum == m:
+        count += 1
+    interval_sum -= data[start]
+print(count)
+# -
+
+# #### 정렬되어 있는 두 리스트의 합집합
+
+# +
+n, m = 3, 4
+a = [1, 3, 5]
+b = [2, 4, 6, 8]
+
+result = [0] *(n+m)
+i = 0
+j = 0
+k = 0
+
+while i < n or j < m :
+    if j >= m or ( i < n and a[i] <= b[j] ):
+        
+        result[k] = a[i]
+        i += 1
+    else:
+        result[k] = b[j]
+        j += 1
+    k += 1
+
+for i in result:
+    print(i, end = ' ')
+    
+# 반복문을 돌리는 데, 두 집합의 원소 개수보다 작을 때 계속돌려
+# 그리고 b 리스다가 다 처리됐거나, a[i]<=b[j] 일때 추가하고 i+=1
+# 아닐 때 b[j]를 추가하고 마지막에 k 를 늘려주라는 거네
+# -
+
+# #### 구간합 계산
+
+# +
+n = 5
+data = [10, 20, 30, 40,50]
+
+sum_value = 0
+prefix_sum = [0] # 리스트에 넣네? # 그렇지 보면 1번째 부터 인덱스 쓸거니까
+                 # 리스트처음에 0을 넣을 필요 없다 이거지
+
+for i in data:
+    sum_value += i
+    prefix_sum.append(sum_value)
+
+left = 3
+right = 4
+print(prefix_sum[right] - prefix_sum[left -1]) # 3번째 - 4번째면 
+                                               # 구간합 기준 2번째까지 에서 4번째 값이니까 left -1
+prefix_sum
+# -
 
 
 

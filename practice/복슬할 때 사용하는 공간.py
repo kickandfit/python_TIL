@@ -1628,10 +1628,256 @@ right = 4
 print(prefix_sum[right] - prefix_sum[left -1]) # 3번째 - 4번째면 
                                                # 구간합 기준 2번째까지 에서 4번째 값이니까 left -1
 prefix_sum
+# +
+# 백준 4673 번 셀프넘버
+# 그니까 set으로 하는데
+# generated_num을 10001에 대해 순차 탐색하면서 set에 넣어
+# 그럼 중복은 제외 되니까
+# 차집합으로 푼다라.. 괜찮네
+
+natural_num = set(range(1, 10001))
+generated_num = set()
+
+for i in range(1,10001):
+    for j in str(i):
+        i += int(j)
+    generated_num.add(i)
+
+self_num = sorted(natural_num - generated_num)
+for i in self_num:
+    print(i, end = ' ')
+
+# +
+# 4673 다른 풀이
+array = [True for _ in range(10001)]
+array[0] = False
+
+for i in range(1,10001):
+    for j in str(i):
+        i += int(j)
+    if i < 10001:
+        array[i] = False
+
+for i in range(1,10001):
+    if array[i]:
+        print(i, end = ' ')
+
+
+# +
+# 한수 1065 번
+N = int(input())
+result = 0
+
+for i in range(1,N+1):
+    if i <= 99 :
+        result += 1
+    else:
+        N = str(i)
+        if int(N[0])-int(N[1]) == int(N[1])-int(N[2]):
+            result += 1
+print(result)
+
+# -
+
+from itertools import permutations
+import math
+a = '110'
+c = list()
+for i in range(1, len(a)+1):
+    b = set(permutations(a, i))
+    for k in b:
+       c.append(k)
+print(c)
+
+# +
+# 프로그래머스 소수 찾기
+# my solution
+# solution 에 다 풀었는데 다른 좋은 풀이는 복습하면서
+# 구성해보자
+import sys
+import math
+from itertools import permutations
+cnt = 0
+def solution(numbers):
+    global cnt
+    n = 10000000
+    array = [True for i in range(n+1)]
+    array[1], array[0] = False, False
+    for i in range(2, int(math.sqrt(n))+1):
+        if array[i]:
+            j = 2
+            while i*j <= n :
+                array[i*j] = False
+                j += 1
+    # 모든 숫자 소수 판별 끝났고 이제 문자열 조합해서
+    # array[i] = True 인 지만 생각하면 되네
+    
+
+    result = []
+    for i in range(1,len(numbers)+1):
+        pre = set(permutations(numbers, i))
+        for j in pre:
+            if int(''.join(j)) not in result:
+                result.append(int(''.join(j)))
+    for num in result:
+        if array[num]:
+            cnt += 1
+          
+    return cnt
+
+# |= 이거 뭐야 | union 연산자네 그니까 내가 생각했던 add 가아닌
+# 병합 연산자 할당자를 써버리네
+# 내가 한 방법은 set을 쓰고 unique 한 연산자에 대해
+# reslut에 추가 했다면
+# 여기서는 a 에다가 set을 map으로 한번에 집어 넣네
+
+from itertools import permutations
+def solution(n):
+    a = set()
+    for i in range(len(n)):
+        a |= set(map(int, map("".join, permutations(list(n), i + 1))))
+    a -= set(range(0, 2))
+    for i in range(2, int(max(a) ** 0.5) + 1):
+        a -= set(range(i * 2, max(a) + 1, i))
+    return len(a)
+
 # -
 
 
 
+# +
+def is_prime_number(yellow):
+    prime_list = []
+    for i in range(1, int(math.sqrt(yellow))+1):
+        if yellow % i == 0:
+            a = int(yellow //i)
+            prime_list.append((a, i))
+    prime_list.sort()
+    return prime_list
 
+test = is_prime_number(2)
+bt_num = []
+for i in test:
+    bt_num.append([int((i[1]+2)*2 +(i[0])*2), i])
+print(bt_num)
+brown = 10
+result = []
+for j in bt_num:
+    if brown == j[0]:
+        result=([j[1][0]+2,j[1][1]+2])
+result
+
+# +
+# 프로그래머스 카펫 풀이
+# 2단계가 뭐 이리 어렵냐 ㅋㅋ
+import math
+
+# yellow 약수의 조합을 묶고, 
+# return 받아 그 list
+def is_prime_number(yellow):
+    prime_list = []
+    for i in range(1, int(math.sqrt(yellow))+1):
+        if yellow % i == 0:
+            a = int(yellow //i)
+            prime_list.append((a, i))
+    prime_list.sort()
+    return prime_list
+
+def solution(brown, yellow):
+    test = is_prime_number(yellow)
+    bt_num = []
+    
+    for i in test:
+        bt_num.append([int((i[1]+2)*2 +(i[0])*2), i])
+    
+    result = list()
+    for j in bt_num:
+        if brown == j[0]:
+            result=([j[1][0]+2,j[1][1]+2])
+    # 노랑을 배치하고
+    # 갈색을 주위에 배치했을 때
+    # 그 갈색의 수가 주어진 brown 가 갔냐
+    # 총 메트릭스의 n,m을 출력해 주면 되겠네
+    
+    # 갈색을 모든 경우에 대해 체크하면 되겠네
+    
+    return result
+
+# 모범답안
+def solution(brown, red):
+    for i in range(1, int(red**(1/2))+1):
+        if red % i == 0: # 나눠 떨어져야 배열을 만들 수 있으니까
+            if 2*(i + red//i) == brown-4: # 내가 생각했던 그 리스트에 넣고 판별을 이렇게 하네
+                return [red//i+2, i+2] #배열을 나타내려면 이렇게 하긴 해야지
+            
+# 코드가 너무 짧아지니까 열받네
+
+
+
+# +
+# 완주하지 못한 선수 처음 풀이
+# 시간 초과
+# 테스트 케이스 모두 통과
+
+from collections import Counter
+def solution(participant, completion):
+    participant_dict = Counter(participant)
+    
+    answer = ""
+    
+    for complete in completion:
+        if complete in participant:
+            participant_dict[complete] -= 1
+            
+    # print(participant_dict)
+    
+    for fail in participant_dict:
+        if participant_dict[fail] != 0:
+            answer = fail
+    return answer
+
+
+# 두번째 풀이
+# 이건 통과 했네
+from collections import deque
+def solution(participant, completion):
+    answer = ""
+    a = sorted(participant)
+    q_participant = deque(sorted(participant))
+    q_completion = deque(sorted(completion))
+   
+    for i in range(len(q_participant)):
+        if len(q_completion) != 0 and len(q_participant) != 0:
+            a = q_participant.popleft()
+            b = q_completion.popleft()
+            
+            if a != b:
+                answer = a
+               
+                break
+        else:
+            answer = q_participant.popleft()
+        
+    return answer
+
+
+# 이 미친 풀이는 뭐야...
+# 그니까 Counter에서 빼서 한번에 넣을 수 있네
+# 키를 넣고 첫번째 것만 꺼내라는 거잖아
+import collections
+
+def solution(participant, completion):
+    answer = collections.Counter(participant) - collections.Counter(completion)
+    return list(answer.keys())[0]
+
+
+# +
+import collections
+
+participant = ['ㅁ', 'ㄴ', 'ㅇ','ㄹ','ㄹ']
+completion =  ['ㅁ', 'ㄴ', 'ㅇ','ㄹ']
+answer = collections.Counter(participant) - collections.Counter(completion)
+answer
+# -
 
 

@@ -587,8 +587,173 @@ def dijstra(start):
             if cost < distance[i[0]]:
                 distance[0]=cost
                 heapq.heappush(q, (cost, i[0]))
-# -
 
+
+# -
+# # 그래프 이론
+
+# #### 여행계획
+# - 문제는 위상 정렬이 keypoint인데
+# - 가능하냐를 묻는 거니까 조금 추가적으로 들어가네
+# - 이거 엔지비 문제랑 비슷하네
+
+# +
+# n, m = map(int, input().split())
+n , m = 5, 4
+Sch = [[0, 1, 0, 1, 1], [1, 0, 1, 1, 0], 
+       [0, 1, 0, 0, 0], [1, 1, 0, 0, 0], [1, 0, 0, 0, 0]]
+parent = [0] * (n + 1)
+# for _ in range(n):
+#     Sch.append(list(map(int, input().split())))
+# print(Sch)
+
+
+def find_parent(parent, x):
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+    
+
+    
+
+for i in range(n):
+    for j in range(n):
+        if Sch[i][j] == 1:
+            union_parent(parent, i+1, j+1)
+    
+# print(graph)
+# 계획을 세워 보면 여행지 리스트를 받고
+# Sch 에서 1인지 확인 후 끝까지 가면 Yes 아니면 No
+des = [2, 3, 4, 3]
+det = True
+for i in range(1, len(des)):
+    if parent[des[i]] == parent[des[i-1]]:
+        continue
+    else:
+        det = False
+if det:
+    print('Yes')
+else:
+    print("No")
+
+print(parent)
+# 그니까 이 문제를 어떻게 풀었냐면
+# 핵심 아이디어는 같은 집합에 속해 있으면 어디든 갈수 있다는 거야
+# 주어진 정보에 따라서 union을 진행하고
+# 마지막에 체크해준거지 같은 집합에 속해 있는지를
+
+# +
+# 여행 계획 모법 답안
+# 핵심 키 아이디어는 맞췄네
+def find_parent(parent, x):
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+
+n , m = 5, 4
+parent = [0] * (n + 1)
+for i in range(1, n + 1):
+    parent[i] = i
+
+for i in range(n):
+    data = list(map(int, input().split()))
+    for j in range(n):
+        if data[j] == 1:
+            graph[i+1].append(j+1)
+            union_parent(parent, i+1, j+1)
+            
+plan = list(map(int, input().split()))
+
+result = True
+
+for i in range(m-1):
+    if find_parent(parent, plan[i]) != find_parent(parent, plan[i+1]):
+        result = False
+
+if result:
+    print('Yes')
+else:
+    print('No')
+    
+# 핵심 아이디어, 핵심 코드 정확히 일치하네
+
+# +
+# 탑승구
+# 이렇게 풀어볼까
+# 탑승구를 각각의 개체로 생각한다음에
+# 도킹 가능한 애들끼리 하나의 집합을 형성하고
+# 그 집합 개수와 비행기의 개수를 비교해서 출력 개수를 잡아보면 되겠네
+
+g = int(input())
+p = int(input())
+
+parent = [0]*(g+1)
+
+for i in range(1,g+1):
+    parent[i] = i
+    
+def find_parent(parent, x):
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+
+result = 0        
+
+# 이 아이디어 재밌네
+# 근데 이거 틀렸어 왜냐면 4 가 들어가면 처음 데이터면 4 랑 3 이 유니온되는데
+# 3은 서로소 집합에 들어가면 안되
+# 3은 도킹 가능한지 모르거든
+# 웃긴 건 뭐냐면
+# 1 1 4 로 들어 갈 수 있는데
+# 그렇게 들어가면 바로 나와서 답이 틀리거든
+# 책이 틀리기도 하네 ㅋㅋ
+
+# 모법 답안 이러고 제시된건데, 틀렸어..
+# for _ in range(p):
+#     data = find_parent(parent, int(input()))
+#     if data == 0:
+#         break
+#     union_parent(parent, data, data-1)
+#     result += 1
+
+print(result)
+#이것도 될것 같은데....
+#오히려 이게 더 맞는거 같아
+pd = list()     
+for a in range(p):
+    i = int(input()) 
+    if i not in pd:
+        pd.append(i)
+
+if p <= len(pd):
+    print(p)
+else:
+    print(len(pd))
+# -
 
 
 

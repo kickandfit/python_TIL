@@ -95,7 +95,21 @@ def detect():
     s = ''
     s += '%gx%g ' % img.shape[2:]  # print string
 
-    if len(det):
+    
+
+
+if __name__ == '__main__':
+    check_requirements(exclude=('pycocotools', 'thop'))
+    with torch.no_grad():
+            detect()
+# -
+
+import cv2
+import numpy as np
+import torch
+import torch.backends.cudnn as cudnn
+
+if len(det):
         # Rescale boxes from img_size to img0 size
         det[:, :4] = scale_coords(img.shape[2:], det[:, :4], img0.shape).round()
 
@@ -115,20 +129,6 @@ def detect():
     print(s)
     cv2.imshow(source, img0)
     cv2.waitKey(0)  # 1 millisecond
-
-
-if __name__ == '__main__':
-    check_requirements(exclude=('pycocotools', 'thop'))
-    with torch.no_grad():
-            detect()
-# -
-
-import cv2
-import numpy as np
-import torch
-import torch.backends.cudnn as cudnn
-
-
 
 # +
 import argparse

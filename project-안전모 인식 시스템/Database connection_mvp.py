@@ -106,8 +106,11 @@ from utils.general import check_img_size, check_requirements, non_max_suppressio
 from utils.torch_utils import select_device, time_sync
 # -
 
-SOURCE = '/content/drive/MyDrive/yolov5/inference/images/test8.jpg'
-WEIGHTS = '/content/drive/MyDrive/yolov5/runs/train/vetable_yolov5s_results11/weights/best.pt'
+# # MVP ( detect 시 객체 검출 하자마자 데이터 베이스에서 신호 보내기 )
+
+# +
+SOURCE = 'C:/Users/moh12/Desktop/runs/test/test3.jpg'
+WEIGHTS = 'C:/Users/moh12/Desktop/runs/train/yolo_helmet_detections_1/weights/best.pt'
 IMG_SIZE = 640
 DEVICE = ''
 AUGMENT = False
@@ -115,7 +118,6 @@ CONF_THRES = 0.25
 IOU_THRES = 0.45
 CLASSES = None
 AGNOSTIC_NMS = False
-
 
 def detect():
     source, weights, imgsz = SOURCE, WEIGHTS, IMG_SIZE
@@ -143,7 +145,9 @@ def detect():
     # Load image
     img0 = cv2.imread(source)  # BGR
     assert img0 is not None, 'Image Not Found ' + source
-
+    
+    # Load video
+    
     # Padded resize
     img = letterbox(img0, imgsz, stride=stride)[0]
 
@@ -161,6 +165,7 @@ def detect():
     t0 = time_sync()
     pred = model(img, augment=AUGMENT)[0]
     print('pred shape:', pred.shape)
+    
 
     # Apply NMS
     pred = non_max_suppression(pred, CONF_THRES, IOU_THRES, classes=CLASSES, agnostic=AGNOSTIC_NMS)
@@ -168,7 +173,8 @@ def detect():
     # Process detections
     det = pred[0]
     print('det shape:', det.shape)
-
+#     print('pred :', pred)
+#     print('det :', det)
     s = ''
     s += '%gx%g ' % img.shape[2:]  # print string
 
@@ -178,16 +184,113 @@ def detect():
 
         # Print results
         for c in det[:, -1].unique():
+            
             n = (det[:, -1] == c).sum()  # detections per class
             s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "
+#             print(f"{names[int(c)]}", f"{n}",f"{c}") #{names[int(c)]} 이름 , n 이 수
+            data = names[int(c)]
+            print('data :',data)
+            if data == 'without_helmet':
+                conn = cx_Oracle.connect('system/1234@localhost:1521/xe')
+                cs = conn.cursor()
+                sql = "insert into sign (sign_wo) values (:1)"
+                cs.execute(sql,('1'))
+                cs.close()
+                conn.commit()
+                conn.close()
 
-    print(det[-1][-1])
+
+                conn = cx_Oracle.connect('system/1234@localhost:1521/xe')
+                cs = conn.cursor()
+                rs = cs.execute("select * from sign")
+
+                for record in rs:
+                    if record[0] == 1:
+
+                        print('헬멧 미착용자 탐지, 헬멧 착용 장려 방송을 송출합니다')
+                        print(f'{n} 명이 헬멧을 착용하지 않았습니다.')
+                        # if 몇 프레임을 기준으로 할지 정해야함.
+                        
+                        sign = 1
+                        if sign == 1:
+                            # 라즈베리파이 연동 부분 코딩
+                            
+                            conn = cx_Oracle.connect('system/1234@localhost:1521/xe')
+                            cs = conn.cursor()
+                            sql = "delete from sign where sign_wo=1"
+                            cs.execute(sql)
+                            rs = cs.execute("select * from sign")
+                        
+                            print('현재 데이터 베이스 행 수 : ', cs.rowcount) 
+                            cnt = 0
+                            print('방송을 송출 했습니다.')
+                            cs.close()
+                            conn.commit()
+                            conn.close()
+                            cnt = 0
+                        # 이부분 수정해야함
+                        else:
+                            conn = cx_Oracle.connect('system/1234@localhost:1521/xe')
+                            cs = conn.cursor()
+                            rs = cs.execute("select * from sign")
+                            for record in rs:
+                                print(record[0])
+                            print(cs.rowcount)
+                            print('탐지 오차일 확률이 높습니다.')
+                            cs.close()
+                            conn.commit()
+                            conn.close()
+                            
+
+                    
+
+
+#                 print(cs.rowcount) 
+#                 cs.close()
+#                 conn.close()
+#     print(det[-1][-1])
     print(s)
 
-
+# +
 if __name__ == '__main__':
     check_requirements(exclude=('pycocotools', 'thop'))
     with torch.no_grad():
             detect()
 
+ # Read video
+# self.mode = 'video'
+# ret_val, img0 = self.cap.read()
+# if not ret_val:
+#     self.count += 1
+#     self.cap.release()
+#         if self.count == self.nf:  # last video
+#             raise StopIteration
+#         else:
+#             path = self.files[self.count]
+#             self.new_video(path)
+#             ret_val, img0 = self.cap.read()
+
+#     self.frame += 1
+#     print(f'video {self.count + 1}/{self.nf} ({self.frame}/{self.frames}) {path}: ', end='')
+# -
+
+
+
+# # 영상 처리시 기본 구현 코드 ( 활용하진 않을 것 )
+
+# +
+# 비디오 읽기
+cap = cv2.VideoCapture(path)
+frame = 0
+frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+while cap.isOpened():
+    
+    ret_val, img0 = cap.read()
+
+    if not ret_val:
+        cap.release()
+    
+    frame += 1
+    print(f'video ({self.frame}/{self.frames}) {path}: ', end='')
 

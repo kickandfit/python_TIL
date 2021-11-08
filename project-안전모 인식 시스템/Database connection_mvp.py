@@ -91,25 +91,24 @@ else:
     cs.close()
     conn.commit()
     conn.close()
+# -
 
-# +
 import time
 import cv2
 import torch
 import torch.backends.cudnn as cudnn
 import numpy as np
-
+import cx_Oracle
 from numpy import random
 from models.experimental import attempt_load
 from utils.datasets import letterbox
 from utils.general import check_img_size, check_requirements, non_max_suppression, scale_coords
 from utils.torch_utils import select_device, time_sync
-# -
 
 # # MVP ( detect 시 객체 검출 하자마자 데이터 베이스에서 신호 보내기 )
 
 # +
-SOURCE = 'C:/Users/moh12/Desktop/runs/test/test3.jpg'
+SOURCE = 'C:/Users/moh12/Desktop/runs/test/*.jpg'
 WEIGHTS = 'C:/Users/moh12/Desktop/runs/train/yolo_helmet_detections_1/weights/best.pt'
 IMG_SIZE = 640
 DEVICE = ''

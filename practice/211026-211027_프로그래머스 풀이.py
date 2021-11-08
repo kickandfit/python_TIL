@@ -286,6 +286,7 @@ def solution(distance, rocks, n):
 
 
 # +
+# 타켓넘버
 from collections import deque
 def bfs(begin, target, words, visited):
     count = 0
@@ -317,4 +318,85 @@ def solution(begin, target, words):
 
     answer = bfs(begin, target, words, visited)
 
+    return answer
+
+
+# +
+# 여행경로
+from collections import defaultdict 
+
+def dfs(graph, N, key, footprint):
+    if len(footprint) == N + 1:
+        return footprint
+
+    for idx, country in enumerate(graph[key]):
+        graph[key].pop(idx)
+        
+        tmp = footprint[:]
+        tmp.append(country)
+        ret = dfs(graph, N, country, tmp)
+        
+        graph[key].insert(idx, country)
+       
+        if ret:
+            return ret
+
+
+def solution(tickets):
+    answer = []
+
+    graph = defaultdict(list)
+
+    N = len(tickets)
+    for ticket in tickets:
+        graph[ticket[0]].append(ticket[1])
+        graph[ticket[0]].sort()
+
+    answer = dfs(graph, N, "ICN", ["ICN"])
+
+    return answer
+    
+
+
+# +
+# 큰 수 만들기
+
+def solution(number, k):
+    answer = [] # Stack
+    
+    for num in number:
+        while k > 0 and answer and answer[-1] < num:
+            answer.pop()
+            k -= 1
+        answer.append(num)
+    
+    return ''.join(answer[:len(answer) - k])
+
+
+# -
+
+#입국심사 - 이진탐색
+def solution(n, times):
+    answer = 0
+    # right는 가장 비효율적으로 심사했을 때 걸리는 시간
+    # 가장 긴 심사시간이 소요되는 심사관에게 n 명 모두 심사받는 경우이다.
+    left, right = 1, max(times) * n
+    while left <= right:
+        mid = (left+ right) // 2
+        people = 0
+        for time in times:
+            # people 은 모든 심사관들이 mid분 동안 심사한 사람의 수
+            people += mid // time
+            # 모든 심사관을 거치지 않아도 mid분 동안 n명 이상의 심사를 할 수 있다면 반복문을 나간다.
+            if people >= n:
+                break
+        
+        # 심사한 사람의 수가 심사 받아야할 사람의 수(n)보다 많거나 같은 경우
+        if people >= n:
+            answer = mid
+            right = mid - 1
+        # 심사한 사람의 수가 심사 받아야할 사람의 수(n)보다 적은 경우
+        elif people < n:
+            left = mid + 1
+            
     return answer
